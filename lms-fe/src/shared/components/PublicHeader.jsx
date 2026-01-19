@@ -14,16 +14,18 @@ import {
   AuthActionsContext,
   AuthStateContext,
 } from "../../app/providers/AuthProvider";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import auth from "../../features/auth/services/auth.service";
 
 const PublicHeader = () => {
   const { user } = useContext(AuthStateContext);
   const { logout } = useContext(AuthActionsContext);
 
-  //
+  const navLinkCustom = ({isActive}) =>({
+    borderBottom: isActive ? "2px solid #0dcaf0" : "none",
+  });
 
-  const handleSelect = async(eventKey) => {
+  const handleSelect = async (eventKey) => {
     console.log("Selected: " + eventKey);
 
     if (eventKey === "signout") {
@@ -36,9 +38,9 @@ const PublicHeader = () => {
   return (
     <Container>
       <Row className="justify-content-center py-4">
-        <Col md={11}>
+        <Col md={12}>
           <Row>
-            <Col md={2} className="d-flex justify-content-end">
+            <Col md={2} className="d-flex justify-content-start">
               <Image src={logo} style={{ width: "160px" }} />
             </Col>
             <Col
@@ -48,36 +50,37 @@ const PublicHeader = () => {
               <Nav
                 className="gap-2 justify-content-end"
                 activeKey="/home"
-                onSelect={(selectedKey) => alert(`selected ${selectedKey}`)}
+                // onSelect={(selectedKey) => alert(`selected ${selectedKey}`)}
               >
                 <Nav.Item>
-                  <Nav.Link className="custom-nav" href="/home">
+                  <Nav.Link as={NavLink} to="/" end className="custom-nav" style={navLinkCustom}>
                     Home
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link className="custom-nav" eventKey="link-1">
+                  <Nav.Link as={NavLink} to="/courses" className="custom-nav" style={navLinkCustom}>
                     Courses
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link className="custom-nav" eventKey="link-2">
+
+                  <Nav.Link as={NavLink} to="/mentor" className="custom-nav" style={navLinkCustom}>
                     Mentor
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link className="custom-nav" eventKey="disabled">
+                  <Nav.Link as={NavLink} to="/group"  className="custom-nav" style={navLinkCustom}>
                     Group
                   </Nav.Link>
                 </Nav.Item>
 
                 <Nav.Item>
-                  <Nav.Link className="custom-nav" eventKey="link-2">
+                  <Nav.Link as={NavLink} to="/testimonial" className="custom-nav" style={navLinkCustom}>
                     Testimonial
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link className="custom-nav" eventKey="link-2">
+                  <Nav.Link as={NavLink} to="/docs" className="custom-nav" style={navLinkCustom}>
                     Docs
                   </Nav.Link>
                 </Nav.Item>

@@ -1,20 +1,8 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LoginPage from "../features/auth/pages/LoginPage";
-import PublicHomePage from "../features/public-site/pages/PublicHomePage";
+import { RouterProvider } from "react-router-dom";
+import routes from "./router/routes";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<LoginPage />}></Route>
-      </Routes>
-      <Routes>
-        <Route path="/" element={<PublicHomePage />}></Route>
-      </Routes>
-    </BrowserRouter>
-
-    //  <PublicHomePage />
-  );
+  return <RouterProvider router={routes} />;
 }
 
 export default App;

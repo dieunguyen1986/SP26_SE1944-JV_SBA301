@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import PublicCourseList from "../components/PublicCourseList";
+import { Container } from "react-bootstrap";
 
 const PublicCoursePage = () => {
   const [isShow, setIsShow] = useState(true);
 
   return (
-    <div className="container-fluid">
+    <Container>
       <div className="row">
         <button
           className="btn btn-warning"
@@ -22,7 +23,7 @@ const PublicCoursePage = () => {
       <div style={{ display: isShow ? "block" : "none" }}>
         <PublicCourseList />
       </div>
-    </div>
+    </Container>
   );
 };
 
