@@ -16,6 +16,11 @@ const categoryService = {
     const response = await axiosClient.get(`/api/v1/categories/${id}`);
     return response.data;
   },
+
+  delete: async(id) => {
+
+    return await axiosClient.delete(`/api/v1/categories/${id}`);
+  }
 };
 
 export default categoryService;

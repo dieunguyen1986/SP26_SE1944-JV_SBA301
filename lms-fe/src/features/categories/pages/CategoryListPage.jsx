@@ -7,7 +7,6 @@ const CategoryListPage = () => {
   const [categories, setCategories] = useState([]);
   const [isShowModal, setIsShowModal] = useState(false);
   const [categoryUpdatable, setCategoryUpdatable] = useState(null);
-  const [isEdit, setIsEdit] = useState(false);
 
   // Get list of categories
   const getAllCategories = async () => {
@@ -45,8 +44,9 @@ const CategoryListPage = () => {
       console.log("Message: " + responseData.message);
 
       setIsShowModal(false);
+      setCategoryUpdatable(null);
 
-      getAllCategories();
+      await getAllCategories();
     } catch (error) {
       console.error(error?.message || "Has an error be occurse! ");
       setIsShowModal(true);
@@ -59,10 +59,23 @@ const CategoryListPage = () => {
       const responseData = await categoryService.findById(id);
 
       setCategoryUpdatable(responseData);
-      setIsEdit(true);
+
+      setIsShowModal(true);
     } catch (error) {
       console.log(error?.message || "Have an error...");
-      setIsEdit(false);
+    }
+  };
+
+  // Handling Delete
+  const handleDelete = async (id) => {
+    try {
+      const response = await categoryService.delete(id);
+
+      alert(response.data.message);
+
+      await getAllCategories();
+    } catch (error) {
+      console.log(error?.message || "Can not delete this item!");
     }
   };
 
@@ -75,6 +88,7 @@ const CategoryListPage = () => {
         <Button
           onClick={() => {
             setIsShowModal(true);
+            setCategoryUpdatable(null);
           }}
           variant="info"
           className="rounded-2"
@@ -114,30 +128,32 @@ const CategoryListPage = () => {
                 <td>{c.categoryName}</td>
                 <td>{c.description}</td>
                 <td>{c.sortOrder}</td>
-                <td>{c.isActive}</td>
+                <td>{c.active ? "Active" : "In-active"}</td>
                 <td>{c.updateAt}</td>
                 <td>
-                  <a
-                    className="text-decoration-none"
+                  <button
+                    className="btn btn-link text-decoration-none cursor-pointer"
                     onClick={() => {
                       handleEdit(c.id);
-                      setIsShowModal(true);
                     }}
-                    href="#"
                   >
                     {" "}
                     Edit{" "}
-                  </a>{" "}
+                  </button>{" "}
                   |
-                  <a
-                    className="text-decoration-none"
+                  <button
+                    className="btn btn-link text-decoration-none cursor-pointer"
                     onClick={() => {
-                      handleDelete(c.id);
+                      const confirm = window.confirm(
+                        `Do you want delete ${c.categoryName}?`,
+                      );
+
+                      if (confirm) handleDelete(c.id);
                     }}
                   >
                     {" "}
                     Delete
-                  </a>
+                  </button>
                 </td>
               </tr>
             ))
@@ -147,12 +163,12 @@ const CategoryListPage = () => {
 
       {isShowModal ? (
         <CategoryDetailModal
+          key={categoryUpdatable?.id ?? "create"}
           isShowModal={isShowModal}
           setIsShowModal={setIsShowModal}
           categories={categories}
           categoryUpdatable={categoryUpdatable}
           handleSubmit={handleSubmit}
-          isEdit={isEdit}
         />
       ) : (
         ""

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Button, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 
 const CategoryDetailModal = ({
   isShowModal,
@@ -7,38 +7,38 @@ const CategoryDetailModal = ({
   categories,
   handleSubmit,
   categoryUpdatable,
-  isEdit
 }) => {
   // Logic
-  const [category, setCategory] = useState({
-    id: "",
+
+  const EMPTY_CATEGORY = {
+    id: 0, // default id = 0 (create)
     categoryName: "",
     sortOrder: 1,
     description: "",
-    isActive: true,
+    active: true,
     parentId: 0,
+  };
 
-  });
-
-  // UI
+  const [category, setCategory] = useState(EMPTY_CATEGORY);
 
   useEffect(() => {
-    console.log("categoryUpdatable: " + categoryUpdatable);
-
-    const setUpdateData = async () => {
-      setCategory({
-        id: categoryUpdatable?.id,
-        categoryName: categoryUpdatable.categoryName,
-        sortOrder: categoryUpdatable.sortOrder,
-        description: categoryUpdatable.description,
-        isActive: categoryUpdatable.isActive,
-        parentId: categoryUpdatable.parentId,
-      });
+    const setDataCategory = async () => {
+      if (categoryUpdatable?.id) {
+        setCategory({
+          id: Number(categoryUpdatable.id),
+          categoryName: categoryUpdatable.categoryName ?? "",
+          sortOrder: Number(categoryUpdatable.sortOrder ?? 1),
+          description: categoryUpdatable.description ?? "",
+          active: Boolean(categoryUpdatable.active),
+          parentId: Number(categoryUpdatable.parentId ?? 0),
+        });
+      } else {
+        setCategory(EMPTY_CATEGORY);
+      }
     };
 
-    setUpdateData();
-
-  }, [isEdit]);
+    setDataCategory();
+  }, [categoryUpdatable, isShowModal]);
 
   const handleSubmitCategory = (e) => {
     e.preventDefault();
@@ -46,6 +46,7 @@ const CategoryDetailModal = ({
     handleSubmit(category);
   };
 
+  // UI
   return (
     <Modal
       size="lg"
@@ -61,7 +62,7 @@ const CategoryDetailModal = ({
       <Modal.Body>
         <Form onSubmit={handleSubmitCategory}>
           <Form.Group className="mb-3" controlId="id">
-            <Form.Control type="hidden" />
+            <Form.Control type="hidden" value={category.id} name="id" />
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="categoryName">
@@ -95,6 +96,7 @@ const CategoryDetailModal = ({
             <Form.Select
               aria-label="parent"
               name="parentId"
+              value={category.parentId}
               onChange={(e) => {
                 setCategory({
                   ...category,
@@ -121,7 +123,7 @@ const CategoryDetailModal = ({
               name="sortOrder"
               value={category.sortOrder}
               onChange={(e) => {
-                setCategory({ ...category, sortOrder: e.target.value });
+                setCategory({ ...category, sortOrder: Number(e.target.value)});
               }}
             />
           </Form.Group>
@@ -129,11 +131,12 @@ const CategoryDetailModal = ({
           <Form.Group className="mb-3" controlId="active">
             <Form.Check
               type="checkbox"
-              checked={category.isActive}
+              checked={category.active}
               label="Active"
-              name="isActive"
+              name="active"
+              value={category.active}
               onChange={(e) => {
-                setCategory({ ...category, isActive: e.target.checked });
+                setCategory({ ...category, active: e.target.checked });
               }}
             />
           </Form.Group>
