@@ -12,4 +12,6 @@ public interface CategoryService {
     List<Category> getAllCategories();
 
     CategoryResponse getCategoryById(Integer categoryId);
+
+    void deleteCategoryById(Integer categoryId);
 }

@@ -33,6 +33,10 @@ public class CategoryServiceImpl implements CategoryService {
                 .isActive(categoryRequest.isActive())
                 .build();
 
+        if(categoryRequest.getId() != null && categoryRequest.getId() != 0) {
+            category.setId(categoryRequest.getId());
+        }
+
         if (parent.isPresent()) {
             category.setParent(parent.get());
         }
@@ -63,9 +67,20 @@ public class CategoryServiceImpl implements CategoryService {
                 .categoryName(category.getCategoryName())
                 .description(category.getDescription())
                 .sortOrder(category.getSortOrder())
-                .isActive(category.isActive())
+                .active(category.isActive())
                 .parentId(category.getParent() !=null ? category.getParent().getId(): null)
                 .build();
+    }
+
+    @Override
+    public void deleteCategoryById(Integer categoryId) {
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+
+        Category category = categoryOptional.orElseThrow(()->{
+            throw new IllegalStateException("Category with id " + categoryId + " not found");
+        });
+
+        categoryRepository.delete(category);
     }
 }
 // Lambda Expression: implement Functional Interface

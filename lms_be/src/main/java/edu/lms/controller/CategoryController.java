@@ -47,4 +47,12 @@ public class CategoryController {
         log.info("Controller - getCategoryById: {}", categoryResponse);
         return ResponseEntity.ok().body(categoryResponse);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id) {
+        log.info("deleteCategoryById: {}", id);
+        categoryService.deleteCategoryById(id);
+
+        return ResponseEntity.ok().body(Map.of("message", "Delete successfully"));
+    }
 }
