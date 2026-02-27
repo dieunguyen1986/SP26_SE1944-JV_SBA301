@@ -1,21 +1,23 @@
-import React from 'react'
-import axiosClient from '../../../shared/services/axiosClient';
+import React from "react";
+import axiosClient from "../../../shared/services/axiosClient";
 
 const courseService = {
-    findAll: async () => {
-        const reponse = await axiosClient.get("/courses");
+  findAll: async (params = {}) => {
+    const response = await axiosClient.get("/courses", {
+      params,
+    });
+    return response.data;
+  },
 
-        return reponse.data;
-    },
-    findById: async (courseId) => {
-        const reponse = await axiosClient.get(`/courses/${courseId}`);
+  findById: async (courseId) => {
+    const response = await axiosClient.get(`/courses/${courseId}`);
+    return response.data;
+  },
 
-        return reponse.data;
-    },
-    createCourse: async(payload) => {
-
-    },
-
+  createCourse: async (payload) => {
+    const response = await axiosClient.post(`/courses`, payload);
+    return response.data;
+  },
 };
 
 export default courseService;

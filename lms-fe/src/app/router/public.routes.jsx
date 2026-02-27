@@ -11,7 +11,7 @@ import RegisterPage from "../../features/auth/pages/RegisterPage";
 
 const publicRoutes = [
   { path: "/login", element: <LoginPage /> },
-  {path: "/register", element: <RegisterPage />},
+  { path: "/register", element: <RegisterPage /> },
   {
     path: "/",
     element: <PublicLayout />,

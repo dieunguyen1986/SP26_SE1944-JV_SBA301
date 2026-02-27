@@ -1,11 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
 import CourseFilter from "./CourseFilter";
 import PublicCourseList from "./PublicCourseList";
 import { useLoaderData } from "react-router-dom";
-import { Col, Container, Row } from "react-bootstrap";
 
 const MainCourseList = () => {
-  const [courses, setCourses] = useState(useLoaderData());
+
+  // Declare states
+  const [courses, setCourses] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // Get data from loader in route: loader: courseService.findAll,
+  const courseResponse = useLoaderData();
+
+  
+  useEffect(() => {
+    setCourses(courseResponse.courses);
+    setTotalPages(courseResponse.totalPages);
+  }, [courseResponse]);
 
   return (
     <section className="bg-white">
@@ -16,7 +28,10 @@ const MainCourseList = () => {
           </Col>
 
           <Col md={9} xl={9} className="bg-light rounded-3 py-5">
-            <PublicCourseList courses={courses} />
+            <PublicCourseList
+              courses={courses}
+              totalPages={totalPages}
+            />
           </Col>
         </Row>
       </Container>

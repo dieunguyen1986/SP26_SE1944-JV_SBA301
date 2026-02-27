@@ -16,12 +16,15 @@ const CourseFilter = () => {
   const [categories, setCategories] = useState([]);
   const [selectedLevels, setSelectedLevels] = useState(["all"]);
 
+  // Call API to get categories for filter
   useEffect(() => {
-    // giả lập call API
     const fetchCategories = async () => {
       try {
-        const response = await categoryService.getCategories();
-        setCategories(response);
+        const responseData = await categoryService.getCategories();
+
+        console.log("Fetched categories:", responseData);
+
+        setCategories(responseData);
 
       } catch (error) {
         console.error("Failed to fetch categories:", error);
@@ -29,7 +32,9 @@ const CourseFilter = () => {
     };
 
     fetchCategories();
-  });
+  }, []);
+
+  // Logic for level filter: single or multi select
   const toggleLevel = (key) => {
     setSelectedLevels((prev) => {
       // nếu chọn "all" -> chỉ giữ all
@@ -72,8 +77,8 @@ const CourseFilter = () => {
           <div className="fw-semibold mb-2">Categories</div>
           <Form.Select className="py-2">
             {categories.map((c) => (
-              <option key={c.id} value={c.name}>
-                {c.name}
+              <option key={c.id} value={c.categoryName}>
+                {c.categoryName}
               </option>
             ))}
           </Form.Select>
