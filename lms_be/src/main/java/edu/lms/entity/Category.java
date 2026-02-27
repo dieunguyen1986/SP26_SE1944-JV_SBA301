@@ -1,5 +1,6 @@
 package edu.lms.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,7 +38,8 @@ public class Category {
     @JoinColumn(name ="parent_id", referencedColumnName = "id")
     private Category parent;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<CourseCategory> courseCategories;
 
 }

@@ -1,5 +1,6 @@
 package edu.lms.entity;
 
+import edu.lms.enums.CourseLevel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -26,6 +26,8 @@ public class Course {
     @Column(columnDefinition = "NVARCHAR(250)")
     private String title;
 
+    private String subtitle;
+
     @Column(name = "short_description", columnDefinition = "TEXT")
     private String shortDescription;
 
@@ -40,6 +42,19 @@ public class Course {
     @Column(name ="thumbnail_url", columnDefinition = "VARCHAR(1024)")
     private String thumbnailUrl;
 
+    private Double rating;
+
+    @Column(name = "rating_count")
+    private Integer ratingCount;
+    private Integer students;
+
+    @Column(name = "total_hours")
+    private Double totalHours;
+
+    private Double price;
+
+    private Double discount;
+
     private String status;
 
     @Column(name = "publish_at")
@@ -51,10 +66,13 @@ public class Course {
     @Column(name = "update_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private Set<CourseCategory> courseCategories;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name ="owner_user_id", referencedColumnName = "user_id")
     private User creator;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Module> modules;
 }

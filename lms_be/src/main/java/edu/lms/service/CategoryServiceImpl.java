@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +25,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category createCategory(CategoryRequest categoryRequest) {
 
-        Optional<Category> parent = categoryRepository.findById(categoryRequest.getParentId());
-
         Category category = Category.builder()
                 .categoryName(categoryRequest.getCategoryName())
                 .description(categoryRequest.getDescription())
@@ -33,25 +32,45 @@ public class CategoryServiceImpl implements CategoryService {
                 .isActive(categoryRequest.isActive())
                 .build();
 
-        if(categoryRequest.getId() != null && categoryRequest.getId() != 0) {
+        if (categoryRequest.getId() != null && categoryRequest.getId() != 0) {
             category.setId(categoryRequest.getId());
         }
 
-        if (parent.isPresent()) {
-            category.setParent(parent.get());
+        if (categoryRequest.getParentId() != null) {
+            Optional<Category> parent = categoryRepository.findById(categoryRequest.getParentId());
+
+            if (parent.isPresent()) {
+                category.setParent(parent.get());
+            }
         }
+
 
         return categoryRepository.save(category);
     }
 
     @Override
-    public List<Category> getAllCategories() {
+    public List<CategoryResponse> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
 
-        Collections.sort(categories, (c1, c2) -> {
-            return c1.getSortOrder() - c2.getSortOrder();
-        });
-        return categories;
+        return categories.stream()
+                .sorted(Comparator.comparingInt(Category::getSortOrder))
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+
+    private CategoryResponse mapToResponse(Category category) {
+        return CategoryResponse.builder()
+                .id(category.getId())
+                .categoryName(category.getCategoryName())
+                .description(category.getDescription())
+                .sortOrder(category.getSortOrder())
+                .active(category.isActive())
+                .createAt(category.getCreateAt())
+                .updateAt(category.getUpdateAt())
+                .parentId(category.getParent() != null ? category.getParent().getId() : null)
+                .parentName(category.getParent() != null ? category.getParent().getCategoryName() : null)
+                .build();
     }
 
     @Override
@@ -68,7 +87,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .description(category.getDescription())
                 .sortOrder(category.getSortOrder())
                 .active(category.isActive())
-                .parentId(category.getParent() !=null ? category.getParent().getId(): null)
+                .parentId(category.getParent() != null ? category.getParent().getId() : null)
                 .build();
     }
 
@@ -76,7 +95,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategoryById(Integer categoryId) {
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
 
-        Category category = categoryOptional.orElseThrow(()->{
+        Category category = categoryOptional.orElseThrow(() -> {
             throw new IllegalStateException("Category with id " + categoryId + " not found");
         });
 
