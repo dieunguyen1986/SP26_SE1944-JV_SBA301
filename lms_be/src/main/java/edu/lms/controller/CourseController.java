@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourseController {
     private final CourseService courseService;
 
-    @GetMapping
+    @GetMapping("/public")
     public ResponseEntity<CourseResponse> getCourse(@RequestParam(defaultValue = "1", required = false) Integer page, @RequestParam(defaultValue = "9", required = false) Integer size) {
 
         log.info("Get course by page {}, and size {}", page, size);
