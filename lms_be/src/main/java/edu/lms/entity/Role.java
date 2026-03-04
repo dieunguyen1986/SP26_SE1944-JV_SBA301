@@ -20,7 +20,7 @@ public class Role {
     private Integer id;
 
     private String code;
-    private String name;
+    private String name; // "ROLE_ADMIN", "ROLE_INSTRUCTOR", "ROLE_LEARNER", "ROLE_STAFF"
     private String description;
 
     @Column(name = "create_at")
