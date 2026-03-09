@@ -19,14 +19,13 @@ public class Role {
     @Column(name = "id")
     private Integer id;
 
-    private String code;
     private String name; // "ROLE_ADMIN", "ROLE_INSTRUCTOR", "ROLE_LEARNER", "ROLE_STAFF"
     private String description;
 
-    @Column(name = "create_at")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "update_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "role")

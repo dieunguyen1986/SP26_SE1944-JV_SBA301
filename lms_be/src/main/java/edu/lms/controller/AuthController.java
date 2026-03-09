@@ -2,6 +2,9 @@ package edu.lms.controller;
 
 import edu.lms.constants.ApiPaths;
 import edu.lms.dto.AuthRequest;
+import edu.lms.dto.AuthResponse;
+import edu.lms.dto.CustomUserDetails;
+import edu.lms.security.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(ApiPaths.AUTH)
 @RequiredArgsConstructor
@@ -22,22 +27,36 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
-    @PostMapping
-    public ResponseEntity<?> login(@RequestBody @Valid AuthRequest authRequest) {
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthRequest authRequest) {
+
+        log.info("Login Request: {}", authRequest);
 
         // Delegate to AuthenticationManager: process login
-        Authentication authentication = new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword());
-        authenticationManager.authenticate(authentication);
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(),
+                authRequest.getPassword()));
 
         // Auto: AuthenticationManager gọi UserDetailsService.loadUserByUsername(username)
 
+        // Set to context
+        SecurityContextHolder.getContext().setAuthentication(authentication); // Lưu thông tin đăng nhập
+
         log.info("Authenticated {}", SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
 
-        log.info("User logged {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        log.info("Username {}", SecurityContextHolder.getContext().getAuthentication().getName());
+        log.info("User logged in {}", ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
 
         // Call Gen token function
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String accessToken = jwtService.generateToken(userDetails);
 
-        return ResponseEntity.ok().build();
+        log.info("Access token {}", accessToken);
+
+        List<String> roles = userDetails.getAuthorities().stream().map((grantedAuthority -> grantedAuthority.getAuthority())).toList();
+
+        return ResponseEntity.ok(new AuthResponse(accessToken, userDetails.getUsername(), userDetails.getFullName(), roles));
+
     }
 }
