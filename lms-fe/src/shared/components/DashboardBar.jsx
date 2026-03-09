@@ -1,50 +1,79 @@
-import React from "react";
-import { Col, Nav, Row } from "react-bootstrap";
-import { Book } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
-import {
-  FaBook,
-  FaCalendar,
-  FaCalendarWeek,
-  FaUserCircle,
-} from "react-icons/fa";
+import React, { useContext, useMemo } from "react";
+import { Col, Nav } from "react-bootstrap";
+import { Link, useLocation } from "react-router-dom";
+import { AuthStateContext } from "../../app/providers/AuthProvider";
+import MenuItems from "./MenuItems";
 
 const DashboardBar = () => {
+  const { user } = useContext(AuthStateContext);
+
+  const menus = MenuItems[user?.roles[0]] || [];
+  
+  // const location = useLocation();
+
+  // // Determine active link based on role
+  // const menus = useMemo(() => {
+  //   if (!user || !user?.roles) return [];
+
+  //   return user.roles.flatMap((role) => {
+  //     return MenuItems[role] || [];
+  //   });
+  // }, [user]);
+
+  /*
+  MenuItems = {
+    ROLE_ADMIN: [
+      { label: "Dashboard" },
+      { label: "Categories" }
+    ],
+    ROLE_INSTRUCTOR: [
+      { label: "My Courses" },
+      { label: "Students" }
+    ]
+  --> roles.map(role => MenuItems[role])
+  [
+    [
+      { label: "Dashboard" },
+      { label: "Categories" }
+    ],[
+      { label: "My Courses" },
+      { label: "Students" }
+  ]
+  --> flat() --> [
+    { label: "Dashboard" },
+    { label: "Categories" },
+    { label: "My Courses" },
+    { label: "Students" }
+  ]  
+  }
+  */
+
   return (
-    <Col md={2} xl={2} className="shadow-sm fs-6" style={{ height: "100vh" }}>
-      <Nav
-        activeKey="/home"
-        onSelect={(selectedKey) => alert(`selected ${selectedKey}`)}
-      >
-        <Nav.Item className="w-100 py-3 d-flex align-items-center">
-          <FaCalendarWeek className="mt-1 ms-4" />
-          <Nav.Link href="/home" style={{ color: "gray" }}>
-            Dashboard
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item className="w-100 py-3 d-flex align-items-center">
-          <FaCalendarWeek className="mt-1 ms-4" />
-          <Nav.Link as={Link} to="/admin">
-            Category Management
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item className="w-100 py-3 d-flex align-items-center">
-          <Book className="mt-1 ms-4" />
-          <Nav.Link eventKey="link-1" style={{ color: "gray" }}>
-            Course Management
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item className="w-100 py-3 d-flex align-items-center">
-          <FaUserCircle className="mt-1 ms-4" />
-          <Nav.Link eventKey="link-2" style={{ color: "gray" }}>
-            Instructors
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item className="w-100 py-3 border-top">
-          <Nav.Link eventKey="disabled" disabled>
-            Disabled
-          </Nav.Link>
-        </Nav.Item>
+    <Col md={2} xl={2} className="shadow-sm fs-6 vh-100">
+      <Nav className="flex-column">
+        {menus.map((item, index) => (
+          <Nav.Item
+            key={index}
+            className="w-100 py-3 d-flex align-items-center"
+          >
+            <span className="ms-4">{item.icon}</span>
+            <Nav.Link
+              as={Link}
+              to={item.to}
+              className={`ms-2 ${
+                location.pathname === item.to
+                  ? "fw-bold text-primary"
+                  : "text-secondary"
+              }`}
+            >
+              {item.label}
+
+              {item.badge && (
+                <span className="ms-2 badge bg-secondary">{item.badge}</span>
+              )}
+            </Nav.Link>
+          </Nav.Item>
+        ))}
       </Nav>
     </Col>
   );

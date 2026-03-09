@@ -43,13 +43,19 @@ const PublicCourseList = ({
 
   const enrollCourse = (id) => {
     console.log("You are selected: " + id);
-    const result = courseResult.map((c) => {
-      if (c.courseId === id)
-        return { ...c, studentNumber: c.studentNumber + 1 };
-      return c;
-    });
 
-    setCourseResult(result);
+
+
+
+
+    
+    // const result = courseResult.map((c) => {
+    //   if (c.courseId === id)
+    //     return { ...c, studentNumber: c.studentNumber + 1 };
+    //   return c;
+    // });
+
+    // setCourseResult(result);
   };
 
   // Behavious

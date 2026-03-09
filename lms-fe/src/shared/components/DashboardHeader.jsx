@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Col,
   Container,
@@ -12,10 +12,13 @@ import {
 import logo from "@/assets/logo.svg";
 import { Bell, BellFill, BellSlash, Envelope } from "react-bootstrap-icons";
 import { BsSearch } from "react-icons/bs";
+import { AuthActionsContext, AuthStateContext } from "../../app/providers/AuthProvider";
 
 const DashboardHeader = () => {
   const [amountMess, setAmountMess] = useState(0);
   const [newEmail, setNewEmail] = useState(0);
+  const {user} = useContext(AuthStateContext);
+  const {logout} = useContext(AuthActionsContext);
 
   return (
     <section>
@@ -57,7 +60,7 @@ const DashboardHeader = () => {
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                  <NavDropdown title="Admin" id="basic-nav-dropdown">
+                  <NavDropdown title={user?.fullName || user?.email} id="basic-nav-dropdown">
                     <NavDropdown.Item href="#action/3.1">
                       Action
                     </NavDropdown.Item>
@@ -65,11 +68,11 @@ const DashboardHeader = () => {
                       Another action
                     </NavDropdown.Item>
                     <NavDropdown.Item href="#action/3.3">
-                      Something
+                      {user?.roles.length > 1? `Switch to ${user?.roles[1]}`  : "Profile"}
                     </NavDropdown.Item>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item href="#action/3.4">
-                      Separated link
+                    <NavDropdown.Item href="#action/3.4" onClick={() => {logout()}}>
+                      Logout
                     </NavDropdown.Item>
                   </NavDropdown>
                 </Nav>

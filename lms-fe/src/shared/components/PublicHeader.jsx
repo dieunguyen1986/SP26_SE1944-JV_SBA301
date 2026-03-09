@@ -67,7 +67,7 @@ const PublicHeader = () => {
                 <Nav.Item>
                   <Nav.Link
                     as={NavLink}
-                    to="/courses"
+                    to="/public/courses"
                     className="custom-nav"
                     style={navLinkCustom}
                   >
@@ -129,7 +129,7 @@ const PublicHeader = () => {
                     handleSelect(eventKey);
                   }}
                 >
-                  <NavDropdown title={String(user.firstName).concat(" "+ user.lastName)}  id="nav-dropdown">
+                  <NavDropdown title={user.fullName}  id="nav-dropdown">
                     <NavDropdown.Item eventKey="signout">
                       Sign Out
                     </NavDropdown.Item>

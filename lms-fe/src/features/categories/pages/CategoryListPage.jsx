@@ -24,6 +24,7 @@ const CategoryListPage = () => {
 
   useEffect(() => {
     const getAll = () => {
+      console.log("Getting all categories...");
       getAllCategories();
     };
     getAll();
@@ -115,7 +116,7 @@ const CategoryListPage = () => {
         <tbody>
           {categories.length === 0 ? (
             <tr>
-              <td colSpan={5}>
+              <td colSpan={7}>
                 <Alert variant="warning" className="mb-0">
                   No categories found.
                 </Alert>

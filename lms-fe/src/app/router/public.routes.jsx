@@ -18,7 +18,7 @@ const publicRoutes = [
     children: [
       { index: true, element: <PublicHomePage /> },
       {
-        path: "courses",
+        path: "public/courses",
         element: <PublicCoursePage />,
         children: [
           {

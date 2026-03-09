@@ -24,6 +24,7 @@ import useDocumentTitle from "../../../shared/hooks/useDocumentTitle";
 import auth from "../services/auth.service";
 import { AuthActionsContext } from "../../../app/providers/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import ROLE_HOME_PAGE from "../../../shared/components/ROLE_HOME_PAGE";
 
 const LoginPage = () => {
   useDocumentTitle("Login");
@@ -31,7 +32,7 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState(null);
 
-  const {login} = useContext(AuthActionsContext);
+  const { login } = useContext(AuthActionsContext);
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -39,25 +40,48 @@ const LoginPage = () => {
     password: "",
   });
 
-
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // TODO: handle login
 
     try {
       // Call service
-      const response = await auth.login(form);
-      localStorage.setItem("accessToken", response.accessToken);
+      const authResponse = await auth.login(form);
 
-      console.log("Response: " + response);
+      // Store token in localStorage
+      localStorage.setItem("accessToken", authResponse.accessToken);
+
+      console.log("Login successful!", authResponse.accessToken);
+
+      // Set user to context and redirect
+      login(authResponse);
+     
+      // // Handle case where user has no roles
+      // if (authResponse?.roles.includes("ROLE_ADMIN")) {
+      //   navigate(ROLE_HOME_PAGE["ROLE_ADMIN"]);
+      // } else if (authResponse?.roles.includes("ROLE_INSTRUCTOR")) {
+      //   navigate(ROLE_HOME_PAGE["ROLE_INSTRUCTOR"]);
+      // } else if (authResponse?.roles.includes("ROLE_STUDENT")) {
+      //   navigate(ROLE_HOME_PAGE["ROLE_STUDENT"]);
+      // } else {
+      //   // If user has no recognized roles, redirect to a default page or show an error
+      //   navigate("/");
+      // }
+
+      const userRoles = authResponse.roles; // ["ROLE_ADMIN", "ROLE_INSTRUCTOR"]
+
+      console.log("User roles:", userRoles);
       
-      // Set user to context
-      login(response);
+      const redirectPath =
+        userRoles.map((role) => ROLE_HOME_PAGE[role])[0] || "/"; // Get the first role's home page or default to "/"
 
-      navigate("/");
+      console.log("Redirecting to:", redirectPath);
+
+      navigate(redirectPath);
 
     } catch (error) {
-      setMessage(error.message || "An error has occurred!");
+      console.error("Login failed:", error.message);
+      setMessage(error?.response?.data || "Login failed. Please try again.");
     }
   };
 
@@ -69,10 +93,8 @@ const LoginPage = () => {
             <Card className="lp-card shadow-sm border-0">
               <Card.Body className="p-4 p-sm-5">
                 <h2 className="text-center fw-bold mb-4 lp-title">Login</h2>
-                {message &&
-                   <Alert variant="danger">{message}</Alert>
-                }
-               
+                {message && <Alert variant="danger">{message}</Alert>}
+
                 <Form onSubmit={handleSubmit}>
                   {/* Username / Email */}
                   <InputGroup className="lp-input mb-3">

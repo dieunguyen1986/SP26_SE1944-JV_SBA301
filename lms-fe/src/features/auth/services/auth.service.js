@@ -3,12 +3,16 @@ import axiosClient from "../../../shared/services/axiosClient";
 const auth = {
   login: async (payload) => {
 
-    const response = await axiosClient.get("/users");
-    const users = response.data;
-
-     const userResult = users.find((user)=> user.email.lowercase=== payload.email.lowercase && user.password === payload.password)
+    const response = await axiosClient.post("/auth/login", {
+      email: payload.email,
+      password: payload.password,
+    });
     
-    return {...userResult, accessToken: "DEMO_TOKEN"}
+    return response.data;
+
+    //  const userResult = users.find((user)=> user.email.toLowerCase()=== payload.email.toLowerCase() && user.password === payload.password)
+    
+    // return {...userResult, accessToken: "DEMO_TOKEN"}
     
     // if (
     //   payload.email === "admin@example.com" &&
