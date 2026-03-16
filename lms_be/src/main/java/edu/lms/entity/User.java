@@ -1,10 +1,7 @@
 package edu.lms.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -13,6 +10,7 @@ import java.util.Set;
 @Table(name = "Users")
 @Data @Builder
 @NoArgsConstructor @AllArgsConstructor
+@ToString(exclude = {"userRoles"})
 public class User {
 
     @Id
@@ -43,7 +41,7 @@ public class User {
     @Column(name = "update_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> userRoles;
 
 }

@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
@@ -30,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         log.info("URI: {}", uri);
 
-        if(uri.contains("/login") || uri.contains("/logout") || uri.contains("/register")) {
+        if (uri.contains("/login") || uri.contains("/logout") || uri.contains("/register")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -42,7 +44,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Authenticated: false
             // Send to FE: HttpStatus.UNAUTHORIZED
             if (header == null || !header.startsWith("Bearer ")) {
-                filterChain.doFilter(request, response);
+                log.warn("Authorization header not found");
+
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+
                 return;
             }
 
@@ -51,6 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("JwtAuthenticationFilter Access token: {}", accessToken);
             if (accessToken == null) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                filterChain.doFilter(request, response);
                 return;
             }
 
@@ -67,7 +73,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Check valid token
 
             // Store to context
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (Exception ex) {

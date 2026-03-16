@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -23,7 +24,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException ex) {
         log.info("BadCredentialsException: {}", ex.getMessage());
         return new ResponseEntity<>("Invalid email or password!", HttpStatus.BAD_REQUEST);
-//        return new ResponseEntity<>(
-//                Map.of("message", "Invalid email or password!", "error", "Unauthorized"), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<?> handleBusiness(BusinessException ex) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("errorCode", ex.getErrorCode());
+        body.put("message", ex.getMessage());
+
+        return ResponseEntity.badRequest().body(body);
     }
 }

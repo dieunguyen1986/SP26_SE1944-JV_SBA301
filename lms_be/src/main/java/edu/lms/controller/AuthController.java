@@ -4,7 +4,9 @@ import edu.lms.constants.ApiPaths;
 import edu.lms.dto.AuthRequest;
 import edu.lms.dto.AuthResponse;
 import edu.lms.dto.CustomUserDetails;
+import edu.lms.dto.RegisterRequest;
 import edu.lms.security.JwtService;
+import edu.lms.service.AuthApplicationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final AuthApplicationService authApplicationService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthRequest authRequest) {
@@ -58,5 +61,13 @@ public class AuthController {
 
         return ResponseEntity.ok(new AuthResponse(accessToken, userDetails.getUsername(), userDetails.getFullName(), roles));
 
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegisterRequest registerRequest) {
+
+        authApplicationService.register(registerRequest);
+
+        return ResponseEntity.ok().build();
     }
 }

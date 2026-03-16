@@ -13,6 +13,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,6 +55,7 @@ public class CategoryController {
 
             )}
     )
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createCategory(@RequestBody @Valid CategoryRequest categoryRequest) {
 
         log.info("createCategory: {}", categoryRequest);
@@ -62,14 +65,16 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> getAllCategories() {
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
+    public ResponseEntity<List<CategoryResponse>> getAllCategories(Authentication authentication) {
 
-        log.info("getAllCategories: {}");
+        log.info("getAllCategories: {}", authentication.getAuthorities());
 
         return ResponseEntity.ok().body(categoryService.getAllCategories());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getCategoryById(@PathVariable Integer id) {
         log.info("getCategoryById: {}", id);
         CategoryResponse categoryResponse = categoryService.getCategoryById(id);
@@ -79,6 +84,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id) {
         log.info("deleteCategoryById: {}", id);
         categoryService.deleteCategoryById(id);

@@ -44,11 +44,33 @@ public class JwtService {
 
     }
 
-    private Claims extractClaims(String token) {
-        return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
+    /**
+     * The method to validate current access token
+     * @param token
+     * @param userDetails
+     * @return
+     */
+    public boolean validateToken(String token, UserDetails userDetails) {
+        return (extractUsername(token).equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     public String extractUsername(String token) {
-        return extractClaims(token).getSubject();
+        return extractAllClaims(token).getSubject();
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return extractAllClaims(token).getExpiration();
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
