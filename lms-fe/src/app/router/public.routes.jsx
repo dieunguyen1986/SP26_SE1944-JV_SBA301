@@ -1,4 +1,3 @@
-import React from "react";
 import PublicLayout from "../layouts/PublicLayout";
 import PublicHomePage from "../../features/public-site/pages/PublicHomePage";
 import LoginPage from "../../features/auth/pages/LoginPage";
@@ -8,6 +7,7 @@ import courseService from "../../features/courses/services/course.service";
 import MainCourseList from "../../features/courses/components/MainCourseList";
 import CourseDetail from "../../features/courses/pages/CourseDetail";
 import RegisterPage from "../../features/auth/pages/RegisterPage";
+import Unauthorizarion from "../../features/auth/components/Unauthorizarion";
 
 const publicRoutes = [
   { path: "/login", element: <LoginPage /> },
@@ -30,6 +30,10 @@ const publicRoutes = [
         ],
       },
     ],
+  },
+  {
+    path: "/unauthorized",
+    element: <Unauthorizarion />,
   },
   { path: "*", element: <NotFound /> },
 ];

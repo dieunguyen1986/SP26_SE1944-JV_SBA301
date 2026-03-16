@@ -4,11 +4,17 @@ import ProtectedRoute from "./ProtectedRoute";
 
 const adminRoutes = [
   {
+    // Protected route for admin dashboard
     path: "/admin",
-    element: <DashboardLayout />,
+    element: [
+      <ProtectedRoute roles={["ROLE_ADMIN"]}>
+        <DashboardLayout />
+      </ProtectedRoute>,
+    ],
+    
     children: [
-        { index: true, element: <CategoryListPage /> },
-        { path: "categories", element: <CategoryListPage /> }
+      { index: true, element: <CategoryListPage /> },
+      { path: "categories", element: <CategoryListPage /> },
     ],
   },
 ];

@@ -77,6 +77,8 @@ const LoginPage = () => {
 
       console.log("Redirecting to:", redirectPath);
 
+
+      // Use navigate to redirect: hook from react-router-dom
       navigate(redirectPath);
 
     } catch (error) {
